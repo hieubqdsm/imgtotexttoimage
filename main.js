@@ -11,8 +11,9 @@ function imageToAscii(img, width = 120) {
     canvas.height = Math.round(width * aspectRatio * 0.5);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let ascii = '';
+    let ascii = [];
     for (let y = 0; y < canvas.height; y++) {
+        let row = [];
         for (let x = 0; x < canvas.width; x++) {
             const offset = (y * canvas.width + x) * 4;
             const r = imgData.data[offset];
@@ -20,15 +21,27 @@ function imageToAscii(img, width = 120) {
             const b = imgData.data[offset + 2];
             const avg = (r + g + b) / 3;
             const charIdx = Math.floor((avg / 255) * (chars.length - 1));
-            ascii += chars[charIdx];
+            row.push({
+                char: chars[charIdx],
+                color: `rgb(${r},${g},${b})`
+            });
         }
-        ascii += '\n';
+        ascii.push(row);
     }
     return ascii;
 }
 
 function renderAscii(ascii) {
-    crtContainer.innerHTML = '<pre>' + ascii + '</pre>';
+    let html = '<pre style="margin:0;">';
+    for (let y = 0; y < ascii.length; y++) {
+        for (let x = 0; x < ascii[y].length; x++) {
+            const {char, color} = ascii[y][x];
+            html += `<span style=\"color:${color}\">${char}</span>`;
+        }
+        html += '\n';
+    }
+    html += '</pre>';
+    crtContainer.innerHTML = html;
 }
 
 fileInput.addEventListener('change', (e) => {
