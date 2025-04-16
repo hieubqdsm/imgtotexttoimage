@@ -73,6 +73,7 @@ fileInput.addEventListener('change', (e) => {
         video.src = URL.createObjectURL(file);
         video.autoplay = true;
         video.muted = true;
+        video.loop = true; // Thêm dòng này để video tự động lặp lại
         video.play();
         video.addEventListener('play', function () {
             currentVideo = video; // Lưu tham chiếu video hiện tại
