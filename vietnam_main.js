@@ -5,7 +5,7 @@ const fileInput = document.getElementById('file-input');
 let currentVideo = null;
 let animationFrameId = null;
 
-function imageToAscii(img, width = 120) {
+function imageToAscii(img, width = 120, frameOffset = 0) {
     const chars = 'ViệtNam'; // Sử dụng cụm từ "Việt Nam "
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -25,8 +25,8 @@ function imageToAscii(img, width = 120) {
             const r = imgData.data[offset];
             const g = imgData.data[offset + 1];
             const b = imgData.data[offset + 2];
-            // Lấy ký tự tiếp theo từ chuỗi 'Việt Nam '
-            const char = chars[charCounter % chars.length];
+            // Lấy ký tự tiếp theo từ chuỗi 'Việt Nam ', có tính đến độ lệch khung hình
+            const char = chars[(charCounter + frameOffset) % chars.length];
             row.push({
                 char: char,
                 color: `rgb(${r},${g},${b})`
@@ -81,6 +81,7 @@ fileInput.addEventListener('change', (e) => {
         video.play();
         video.addEventListener('play', function () {
             currentVideo = video; // Lưu tham chiếu video hiện tại
+            let frameCounter = 0; // Khởi tạo bộ đếm khung hình
             function step() {
                 if (!currentVideo || currentVideo.paused || currentVideo.ended) {
                     // Dọn dẹp khi video kết thúc hoặc bị dừng
@@ -174,8 +175,9 @@ fileInput.addEventListener('change', (e) => {
                 img.onload = () => {
                     // Chỉ render nếu video này vẫn là video hiện tại
                     if (currentVideo === video) {
-                       const ascii = imageToAscii(img, asciiWidth);
+                       const ascii = imageToAscii(img, asciiWidth, frameCounter); // Truyền frameCounter
                        renderAscii(ascii);
+                       frameCounter++; // Tăng bộ đếm khung hình cho lần gọi tiếp theo
                     }
                 };
                 img.src = canvas.toDataURL();
