@@ -5,7 +5,7 @@ const fileInput = document.getElementById('file-input');
 let currentVideo = null;
 let animationFrameId = null;
 
-function imageToAscii(img, width = 120) {
+function imageToAscii(img, width = 120, frameOffset = 0) {
     const chars = '@#W$9876543210?!abc;:+=-,._ ';
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -15,6 +15,7 @@ function imageToAscii(img, width = 120) {
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let ascii = [];
+    let charCounter = 0; // Bộ đếm để lặp qua các ký tự
     for (let y = 0; y < canvas.height; y++) {
         let row = [];
         for (let x = 0; x < canvas.width; x++) {
@@ -22,12 +23,16 @@ function imageToAscii(img, width = 120) {
             const r = imgData.data[offset];
             const g = imgData.data[offset + 1];
             const b = imgData.data[offset + 2];
-            const avg = (r + g + b) / 3;
-            const charIdx = Math.floor((avg / 255) * (chars.length - 1));
+            const brightness = (r + g + b) / 3; // Tính độ sáng trung bình (0-255)
+            const brightnessIndex = Math.floor((brightness / 255) * (chars.length - 1)); // Map độ sáng vào index của chars
+            // Kết hợp brightnessIndex và frameOffset để chọn ký tự, đảm bảo thay đổi theo thời gian
+            const charIndex = (brightnessIndex + frameOffset) % chars.length;
+            const char = chars[charIndex];
             row.push({
-                char: chars[charIdx],
+                char: char,
                 color: `rgb(${r},${g},${b})`
             });
+            // Không cần charCounter nữa vì index giờ dựa trên độ sáng và frameOffset
         }
         ascii.push(row);
     }
@@ -77,6 +82,7 @@ fileInput.addEventListener('change', (e) => {
         video.play();
         video.addEventListener('play', function () {
             currentVideo = video; // Lưu tham chiếu video hiện tại
+            let frameCounter = 0; // Khởi tạo bộ đếm khung hình
             function step() {
                 if (!currentVideo || currentVideo.paused || currentVideo.ended) {
                     // Dọn dẹp khi video kết thúc hoặc bị dừng
@@ -170,8 +176,9 @@ fileInput.addEventListener('change', (e) => {
                 img.onload = () => {
                     // Chỉ render nếu video này vẫn là video hiện tại
                     if (currentVideo === video) {
-                       const ascii = imageToAscii(img, asciiWidth);
+                       const ascii = imageToAscii(img, asciiWidth, frameCounter); // Truyền frameCounter
                        renderAscii(ascii);
+                       frameCounter++; // Tăng bộ đếm khung hình cho lần gọi tiếp theo
                     }
                 };
                 img.src = canvas.toDataURL();
