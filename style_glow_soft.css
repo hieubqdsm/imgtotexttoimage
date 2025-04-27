@@ -1,0 +1,18 @@
+body { background: #333333; font-family: monospace; margin: 0; padding: 0; }
+#crt-container { width: 100vw; height: 90vh; display: flex; align-items: center; justify-content: center; }
+pre { font-size: 10px; line-height: 8px; letter-spacing: 1px;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  object-fit: contain;
+}
+
+pre span {
+  text-shadow: 0 0 2px currentColor, 0 0 4px currentColor;
+  filter: none;
+  position: static;
+  display: inline;
+}
+
+#crt-container::after { content: ""; display: block; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,255,0,0.03) 0px, rgba(0,255,0,0.03) 2px, transparent 2px, transparent 4px); }
+#file-input { position: fixed; bottom: 10px; left: 10px; z-index: 10; }
