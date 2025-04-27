@@ -6,7 +6,8 @@ let currentVideo = null;
 let animationFrameId = null;
 
 function imageToAscii(img, width = 120) {
-    const chars = '@#W$9876543210?!abc;:+=-,._ ';
+    // const chars = '@#W$9876543210?!abc;:+=-,._ ';
+    const chars = 'ViệtNam';
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const aspectRatio = img.height / img.width;

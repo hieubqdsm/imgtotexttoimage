@@ -13,7 +13,7 @@ function imageToAscii(img, width = 120, frameOffset = 0) {
     canvas.width = width;
     // Điều chỉnh chiều cao canvas để phù hợp hơn với tỷ lệ ký tự (thường cao hơn rộng)
     // Có thể cần tinh chỉnh thêm tỷ lệ này (ví dụ: 0.55 hoặc 0.6)
-    canvas.height = Math.round(width * aspectRatio * 0.55);
+    canvas.height = Math.round(width * aspectRatio * 0.69);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let ascii = [];
